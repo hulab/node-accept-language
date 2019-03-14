@@ -17,8 +17,6 @@ class AcceptLanguage {
         [language: string]: [LanguageTagWithValue];
     } = {};
 
-    private defaultLanguageTag: string | null = null;
-
     public languages(definedLanguages: string[]) {
         if (definedLanguages.length < 1) {
             throw new Error('The number of defined languages cannot be smaller than one.');
@@ -61,8 +59,6 @@ class AcceptLanguage {
                 this.languageTagsWithValues[language].push(lowerCasedLanguageTagWithValues);
             }
         });
-
-        this.defaultLanguageTag = definedLanguages[0];
     }
 
     public get(languagePriorityList: string | null | undefined): string | null {
@@ -75,7 +71,7 @@ class AcceptLanguage {
 
     private parse(languagePriorityList: string | null | undefined): (string | null)[] {
         if (!languagePriorityList) {
-            return [this.defaultLanguageTag];
+            return [];
         }
         const parsedAndSortedLanguageTags = parseAndSortLanguageTags(languagePriorityList);
         const result: LanguageScore[] = [];
@@ -180,7 +176,7 @@ class AcceptLanguage {
                 return quality;
             }
             return a.unmatchedRequestedSubTag - b.unmatchedRequestedSubTag;
-        }).map((l) => l.languageTag) : [this.defaultLanguageTag];
+        }).map((l) => l.languageTag) : [];
 
         function parseAndSortLanguageTags(languagePriorityList: string) {
             return languagePriorityList.split(',').map((weightedLanguageRange) => {
